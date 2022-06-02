@@ -65,6 +65,15 @@ coppia partition3(int *a, int i, int j){
 	return (coppia){.mc1=k, .mc2=h};
 }
 
+void quick3(int *a, int i, int j){ //vettore in 3 parti: a e' il vettore stesso, j fine scansione, i inizio scansione
+	if (i > j-1){
+		return;
+	}
+	coppia c = partition3(a, i, j);
+	quick3(a, i, c.mc1);
+	quick3(a, c.mc2, j);
+}
+
 int medianOfMedians (int *a, int s, int f){
 	printf("Array:");
 	for (int o=s;o<=f; o++){
