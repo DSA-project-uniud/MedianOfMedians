@@ -29,9 +29,9 @@ void swapp (int *x, int *y){
 	*y = temp;
 }
 
-typedef struct{
-	int mc1, mc2;
-}coppia;
+int minn (int a, int b){
+		return a>b?b:a;
+}
 
 void insertionSort (int *a, int len){
 	for (int j=1; j<len; j++){
@@ -45,33 +45,12 @@ void insertionSort (int *a, int len){
 	}
 }
 
-coppia partition3(int *a, int i, int j){
-	int pivot=a[i];
-	int k = i;
-	int h = i+1;
-	for (int l=i+1; l<j; l++){
-		if (a[l] == pivot){
-			swapp(&(a[l]), &(a[h]));
-			h = h+1;
-		} else if (a[l] < pivot) {
-			swapp (&(a[k]), &(a[l]));
-			swapp (&(a[h]), &(a[l]));
-			k++;
-			h++;
-		} else {//l > pivot
-			//non faccio niente
-		}
-	}
-	return (coppia){.mc1=k, .mc2=h};
-}
-
 void quick3(int *a, int i, int j){ //vettore in 3 parti: a e' il vettore stesso, j fine scansione, i inizio scansione
-	if (i > j-1){
-		return;
+	if (i < j){
+		int c = partition3(a, i, j);
+			quick3(a, c+1, j);
+			quick3(a, i, c);
 	}
-	coppia c = partition3(a, i, j);
-	quick3(a, i, c.mc1);
-	quick3(a, c.mc2, j);
 }
 
 int medianOfMedians (int *a, int s, int f){
@@ -79,7 +58,7 @@ int medianOfMedians (int *a, int s, int f){
 	for (int o=s;o<=f; o++){
 		printf("%d ", a[o]);
 	}
-	printf("\n");
+	printf("\nf:%d, s:%d", f, s);
 	if (f-s > 1){
 		int suppl = (f-s)/5+1; //quanti pezzi
 		int b[suppl];
@@ -97,13 +76,13 @@ int medianOfMedians (int *a, int s, int f){
 		if (rest > 0){
 			int didd=(suppl-1)*5;
 			for (int j=didd; j<=f; j++){
-				toSort[j-didd] = a[j];
+				toSort[j-didd] = a[s+j];
 			}
-			printf("Valorriies:%d %d %d",didd, suppl, a[0]);
+			printf("Valorriies:%d %d %d, ora array:",didd, suppl, a[s]);
 			for (int o=0; o<rest; o++)
-				printf("%dlop ", toSort[o]);
+				printf("%d ", toSort[o]);
 			printf("\n");
-			quick3(toSort, 0, rest);
+			quick3(toSort, 0, f-didd);
 			b[suppl-1] = toSort[(rest)/2];
 		}
 		return medianOfMedians(b, 0, suppl-1);
@@ -211,26 +190,25 @@ int main() {
 	}*/
 	
 	//printf("%d\n", mMedian);
-	while (q-p>0){ //3-0>2-1
-		printf("PQ=%d %d", p, q);
-		//mMedian=8;
+	int polo=10;
+	//while (pvt != nth+1){ //3-0>2-1
+	while (polo>0){
 		mMedian=medianOfMedians(a, p, q);
-		printf("mMedian=%d", mMedian);
-		pvt=partition(a, mMedian, p, q);
-		printf("pvt=%d valore=%d\n", pvt, a[pvt]);
-		if (nth-1 < pvt){ //7<3
-			q=pvt;//0
+		printf("\nmMedian: %d Primma: ", mMedian);
+		for (int z=p; z<=q; z++)
+			printf("%d ",a[z]);
+		pvt=partition(a, mMedian, p, q);//fino alla posizione pvt sono minori, poi sono >=
+		printf("\npvt: %d Doppio: ", pvt);
+		for (int z=p; z<=q; z++)
+			printf("%d ",a[z]);
+		printf("p:%d q:%d\n", p, q);
+		if (pvt+p < nth-1){ //7<3
+			p=pvt+p+1;
 		} else {
-			p=pvt+1;
+			q=pvt+p;
 		}
-
-		for (int i=0; i<len; i++)
-			printf("%d ", a[i]);
-		printf("mMedian=%d %d %d\n", mMedian, p, q); //-7 3 3 3 -100 0 11 5 0 3 100
+		polo--;
+		printf("\nPOSSIBILE:%d\n", a[nth-1]);
 	}
-	printf(" mMedian=%d\n", mMedian);
-	printf("\n%d\n", a[nth-1]);
-	
-	//coppia result = medianOfMedians(a, len);
 
 }
